@@ -51,7 +51,7 @@ function element_setup() {
 		array(
 			'menu-1' => esc_html__( 'Primary', 'element' ),
 			'footer-ru' => esc_html__( 'Footer', 'element' ),
-            
+
 		)
 	);
 
@@ -351,6 +351,3 @@ add_filter( 'excerpt_length', function(){
 add_filter('excerpt_more', function($more) {
     return '...';
 });
-
-    
-echo 12;
