@@ -156,9 +156,9 @@ function element_product_tabs($product_tabs)
                 $title = get_sub_field('wc-tab-name');
                 $val = get_sub_field('wc-tab-val');
                 ?>
-<div class="d-flex my-2">
+<div class="flex my-2 justify-between lg:w-[427px] border-b-[1px] border-[#dad8d8] mb-[25px]">
     <div class="col first-border">
-        <div class="text-row">
+        <div class="text-row flex ">
             <?= $title ?>
         </div>
     </div>
@@ -177,19 +177,36 @@ function element_product_tabs($product_tabs)
     }
 
     function element_shipping_tab()
-    {
-       
-    }
+    { ?>
+<?php  if (have_rows('wc-delivery')):
+            
+            while (have_rows('wc-delivery')) : the_row();
+
+            $name = get_sub_field('wc-delivery-title');
+            ?>
+<div>
+    <?= $name; ?>
+</div>
+<?php 
+            endwhile;
+            endif; ?>
+<?php }
 
     if (!empty($product_tabs)) : ?>
 <div class="flex mb-[50px] lg:mb-[200px] flex-col lg:flex-row">
     <div class="mb-5 lg:mb-0 woocommerce-tabs wc-tabs-wrapper mr-[30px] flex-[0_0_35%] lg:flex-[0_0_45%] ">
         <ul class="tabs wc-tabs" role="tablist">
             <?php foreach ($product_tabs as $key => $product_tab) :?>
-            <li class="<?php echo esc_attr($key); ?>_tab woo-tab" id="tab-title-<?php echo esc_attr($key); ?>"
-                role="tab" aria-controls="tab-<?php echo esc_attr($key); ?>">
-                <a class="tab-link" href="#tab-<?php echo esc_attr($key); ?>">
+            <li class="<?php echo esc_attr($key); ?>_tab flex justify-between woo-tab mb-[25px] lg:mb-[35px]"
+                id="tab-title-<?php echo esc_attr($key); ?>" role="tab"
+                aria-controls="tab-<?php echo esc_attr($key); ?>">
+                <a class="tab-link text-[20px] lg:text-[30px] text-[#4F4F4F] font-semibold "
+                    href="#tab-<?php echo esc_attr($key); ?>">
                     <?php echo wp_kses_post(apply_filters('woocommerce_product_' . $key . '_tab_title', $product_tab['title'], $key)); ?>
+                </a>
+                <a href="#tab-<?php echo esc_attr($key); ?>" class="tab-link"> <img
+                        class=" cursor-pointer w-[40px] h-[40px] lg:w-[50px] lg:h-[50px]"
+                        src="<?php echo get_template_directory_uri() . '/assets/img/arrow-down.svg' ?>" alt="">
                 </a>
             </li>
             <?php endforeach; ?>
@@ -445,4 +462,61 @@ function element_remove_checkout_fields($fields)
     
     return $fields;
 
+}
+
+add_action('wc_add_to_cart_message_html', 'message');
+
+function message (){
+    function add_cart_message()
+    { ?>
+<div class="modal-buy-single fixed top-0 left-0 right-0 bottom-0 z-20">
+    <div class="overlay fixed top-0 left-0 ring-0 bottom-0 bg-opacity w-full h-full z-20">
+    </div>
+    <div
+        class="py-[90px] overflow-scroll z-20 px-[10px] sm:px-[65px] fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] w-full h-full sm:w-[950px] sm:h-[570px] bg-[url('../../woocommerce/assets/img/bg-modal.png')]">
+        <div class="modal-close absolute top-[25px] sm:top-[80px] right-4 sm:right-[55px] cursor-pointer">
+            <img src="<?php echo get_template_directory_uri() ?>/woocommerce/assets/img/close.svg" alt="arrow-shop">
+        </div>
+        <div class="text-white text-[22px] lg:text-[44px] font-medium uppercase mb-[40px]">
+            Ваш товар добавлен в корзину
+        </div>
+
+        <div class="text-white flex flex-col h-[500px gap-[25px]">
+            <?php   
+             foreach ( WC()->cart->get_cart() as $cart_item ):
+                $item = $cart_item['data'];
+                if(!empty($item)):
+                    $product = new WC_product($item->id); ?>
+            <div class="flex items-center gap-[25px]">
+                <div class="w-[245px] h-[228px] bg-white p-[20px] flex-[0_0_40%]">
+                    <?= $product->get_image(); ?>
+                </div>
+                <div class="flex flex-col">
+                    <div class="max-w-[440px] font-semibold text-[30px]">
+                        <?= $product->name ?>
+                    </div>
+                    <div class="flex gap-[30px] mt-8">
+                        <a class="text-[18px] flex justify-center items-center bg-[#ff9309] rounded-[50px] cursor-pointer w-[230px] h-[45px]"
+                            href="">
+                            Продолжить покупки
+                        </a>
+                        <a class="text-[18px] flex justify-center items-center bg-[#ff9309] rounded-[50px] cursor-pointer w-[230px] h-[45px]"
+                            href="<?php echo wc_get_cart_url(); ?>">
+                            Перейти в корзину
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <?php endif;  ?>
+            <?php endforeach; ?>
+
+        </div>
+    </div>
+</div>
+
+
+<?php  }
+
+    $message = add_cart_message();
+    return $message;
 }

@@ -48,7 +48,7 @@ do_action( 'woocommerce_before_cart' ); ?>
                 </div>
                 <div class="flex-col flex gap-[35px] sm:gap-[55px]">
                     <div class="flex">
-                        <div class="text-[14px] sm:text-[18px] font-semibold sm:max-w-[317px]">
+                        <div class="text-[14px] sm:text-[18px] font-semibold sm:max-w-[317px] sm:w-[317px]">
                             <?php
 						if ( ! $product_permalink ) {
 							echo wp_kses_post( apply_filters( 'woocommerce_cart_item_name', $_product->get_name(), $cart_item, $cart_item_key ) . '&nbsp;' );
@@ -72,27 +72,20 @@ do_action( 'woocommerce_before_cart' ); ?>
                                 <div class="text-acentYellow text-[16px] sm:text-[20px]">
                                     <?php echo apply_filters( 'woocommerce_cart_item_price', WC()->cart->get_product_price( $_product ), $cart_item, $cart_item_key ); // PHPCS: XSS ok. ?>
                                 </div>
-                                <div>
+                               <div class="flex quantity justify-center gap-[10px] items-center">
+								<div class="plus qty-btn text-[25px] cursor-pointer">+</div>
+							   <div class="product-quantity w-[70px] h-[30px] border-[1px] border-[#E5E5E5] rounded-[5px] flex justify-center items-center"
+                                    data-title="<?php esc_attr_e( 'Quantity', 'woocommerce' ); ?>">
                                     <?php
 						if ( $_product->is_sold_individually() ) {
-							$product_quantity = sprintf( '1 <input type="hidden" name="cart[%s][qty]" value="1" />', $cart_item_key );
-						} else {
-							$product_quantity = woocommerce_quantity_input(
-								array(
-									'input_name'   => "cart[{$cart_item_key}][qty]",
-									'input_value'  => $cart_item['quantity'],
-									'max_value'    => $_product->get_max_purchase_quantity(),
-									'min_value'    => '0',
-									'product_name' => $_product->get_name(),
-								),
-								$_product,
-								false
-							);
-						}
+							$product_quantity = sprintf( '%s<input class="input-text" type="hidden" name="cart[%s][qty]" value="%s" />', $cart_item['quantity'],$cart_item_key,  $cart_item['quantity']  );
+						} 
 
 						echo apply_filters( 'woocommerce_cart_item_quantity', $product_quantity, $cart_item_key, $cart_item ); // PHPCS: XSS ok.
 						?>
                                 </div>
+								<div class="minus qty-btn text-[25px] cursor-pointer">-</div>
+							   </div>
                             </div>
                         </div>
                     </div>
